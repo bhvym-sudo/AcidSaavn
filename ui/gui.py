@@ -75,7 +75,7 @@ class PlayWorker(QThread):
     
     def run(self):
         try:
-            stream_url = get_stream_url(self.song_data['encrypted_media_url'], self.query)
+            stream_url = get_stream_url(self.song_data['encrypted_media_url'], query=self.query)
             if not stream_url:
                 self.playbackFailed.emit("Failed to get stream URL")
                 return
@@ -416,8 +416,9 @@ class AcidSaavnGUI(QMainWindow):
 
     def download_song(self, song_data):
         try:
+            query = self.search_bar.text().strip()
             self.status_label.setText(f"Downloading: {song_data['title']}")
-            stream_url = get_stream_url(song_data['encrypted_media_url'])
+            stream_url = get_stream_url(song_data['encrypted_media_url'], query=query)
             if not stream_url:
                 self.show_error("Download Error", "Failed to get stream URL")
                 return
