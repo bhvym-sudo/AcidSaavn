@@ -2,7 +2,7 @@ import sys
 import threading
 import requests
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QScrollArea, QFrame, QSizePolicy, QProgressBar, QMessageBox
-from PyQt5.QtCore import Qt, QSize, pyqtSignal, QThread
+from PyQt5.QtCore import Qt, QSize, pyqtSignal, QThread, QTimer
 from PyQt5.QtGui import QFont, QPixmap
 from core.search_module import search_jiosaavn
 from core.token_module import get_stream_url
@@ -15,7 +15,6 @@ except ImportError:
     print("Warning: ffpyplayer not available. Audio playback disabled.")
     AUDIO_AVAILABLE = False
 
-# Colors based on your palette
 CHARCOAL = "#1E3B4C"
 CERULEAN = "#156F89"
 NIGHT = "#101012"
@@ -263,6 +262,9 @@ class AcidSaavnGUI(QMainWindow):
         self.play_worker = None
         self.current_playing_card = None
         self.song_cards = []
+        self.search_timer = QTimer()
+        self.search_timer.setSingleShot(True)
+        self.search_timer.timeout.connect(self.perform_search)
         self.setup_ui()
     
     def setup_ui(self):
@@ -298,29 +300,9 @@ class AcidSaavnGUI(QMainWindow):
             }}
         """)
         self.search_bar.returnPressed.connect(self.search)
+        self.search_bar.textChanged.connect(self.on_text_changed)
         search_layout.addWidget(self.search_bar)
         
-        self.search_button = QPushButton("Search")
-        self.search_button.setFixedHeight(40)
-        self.search_button.setFixedWidth(100)
-        self.search_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {CERULEAN};
-                border: none;
-                border-radius: 20px;
-                color: white;
-                font-weight: bold;
-                font-size: 14px;
-            }}
-            QPushButton:hover {{
-                background-color: {PAYNES_GRAY};
-            }}
-            QPushButton:disabled {{
-                background-color: #666;
-            }}
-        """)
-        self.search_button.clicked.connect(self.search)
-        search_layout.addWidget(self.search_button)
         
         main_layout.addLayout(search_layout)
         
@@ -343,24 +325,33 @@ class AcidSaavnGUI(QMainWindow):
         self.scroll_area.setWidget(self.results_widget)
         main_layout.addWidget(self.scroll_area)
 
-    def search(self):
+    def on_text_changed(self):
+        self.search_timer.stop()
         query = self.search_bar.text().strip()
-        if not query:
-            self.show_error("Search Error", "Please enter a search query")
-            return
-        self.search_button.setEnabled(False)
-        self.search_button.setText("Searching...")
-        self.clear_results()
-        self.status_label.setText(f"Searching for '{query}'...")
-        self.stop_song()
-        if self.search_worker and self.search_worker.isRunning():
-            self.search_worker.terminate()
-            self.search_worker.wait()
-        self.search_worker = SearchWorker(query)
-        self.search_worker.songFound.connect(self.add_song_result)
-        self.search_worker.searchCompleted.connect(self.on_search_completed)
-        self.search_worker.searchFailed.connect(self.on_search_failed)
-        self.search_worker.start()
+        if query:
+            self.search_timer.start(300)
+        else:
+            self.clear_results()
+            self.status_label.setText("Enter a search query to find music...")
+
+    def perform_search(self):
+        query = self.search_bar.text().strip()
+        if query:
+            self.clear_results()
+            self.status_label.setText(f"Searching for '{query}'...")
+            self.stop_song()
+            if self.search_worker and self.search_worker.isRunning():
+                self.search_worker.terminate()
+                self.search_worker.wait()
+            self.search_worker = SearchWorker(query)
+            self.search_worker.songFound.connect(self.add_song_result)
+            self.search_worker.searchCompleted.connect(self.on_search_completed)
+            self.search_worker.searchFailed.connect(self.on_search_failed)
+            self.search_worker.start()
+
+    def search(self):
+        self.search_timer.stop()
+        self.perform_search()
 
     def clear_results(self):
         for card in self.song_cards:
@@ -373,14 +364,11 @@ class AcidSaavnGUI(QMainWindow):
         self.song_cards.append(song_card)
 
     def on_search_completed(self):
-        self.search_button.setEnabled(True)
-        self.search_button.setText("Search")
+
         count = len(self.song_cards)
         self.status_label.setText(f"Found {count} results" if count > 0 else "No results found")
 
     def on_search_failed(self, error_message):
-        self.search_button.setEnabled(True)
-        self.search_button.setText("Search")
         self.status_label.setText(f"Search failed: {error_message}")
         self.show_error("Search Error", error_message)
 

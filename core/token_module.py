@@ -8,7 +8,7 @@ def get_stream_url(encrypted_media_url,query):
     params = {
         "__call": "song.generateAuthToken",
         "url": encrypted_media_url,
-        "bitrate": "128",
+        "bitrate": "320",
         "api_version": "4",
         "_format": "json",
         "ctx": "web6dot0",
