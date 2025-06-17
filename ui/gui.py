@@ -279,6 +279,19 @@ class AcidSaavnGUI(QMainWindow):
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setStyleSheet(f"color: {CERULEAN}; margin: 10px;")
         main_layout.addWidget(title_label)
+
+        version_label = QLabel("Version - z2, made by bhvym")
+        version_label.setFont(QFont("Arial", 9))
+        version_label.setStyleSheet("color: gray; padding-right: 5px;")
+        version_label.move(self.width() - 90, 10)
+        version_label.raise_()
+
+
+        version_container = QHBoxLayout()
+        version_container.addStretch()
+        version_container.addWidget(version_label)
+
+        main_layout.addLayout(version_container)
         
         search_layout = QHBoxLayout()
         search_layout.setSpacing(10)
