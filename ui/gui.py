@@ -283,8 +283,8 @@ class AcidSaavnGUI(QMainWindow):
         version_label = QLabel("Version - z2, made by bhvym")
         version_label.setFont(QFont("Arial", 9))
         version_label.setStyleSheet("color: gray; padding-right: 5px;")
-        version_label.move(self.width() - 90, 10)
-        version_label.raise_()
+        version_label.setAlignment(Qt.AlignRight)
+
 
 
         version_container = QHBoxLayout()
