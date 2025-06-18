@@ -1,0 +1,6 @@
+- Modify the backend , and send requests using Sessions, reset the session when we search and play new song
+- Randomize the cookies in headers, to avoid suspicion
+- Remove the bugs from the music bar, and make it functioning
+- Music length is not showing
+- Bar is not working to navigate through songs
+- 
