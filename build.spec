@@ -8,6 +8,7 @@ a = Analysis(
     datas=[
         ('core/*', 'core'),
         ('ui/*', 'ui'),
+        ('utils/*', 'utils')
     ],
     hiddenimports=[
         'requests',
@@ -33,7 +34,7 @@ exe = EXE(
     a.zipfiles,  # Include zipfiles in the EXE
     a.datas,     # Include data files in the EXE
     [],
-    name='AcidSaavn',
+    name='AcidSaavn-z3',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

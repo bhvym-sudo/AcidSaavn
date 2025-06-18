@@ -73,7 +73,7 @@ class AcidSaavnGUI(QMainWindow):
         title_label.setStyleSheet(f"color: {CERULEAN}; margin: 10px;")
         main_layout.addWidget(title_label)
 
-        version_label = QLabel("Version - z2, made by bhvym")
+        version_label = QLabel("Version - z3, made by bhvym")
         version_label.setFont(QFont("Arial", 9))
         version_label.setStyleSheet("color: gray; padding-right: 5px;")
         version_label.setAlignment(Qt.AlignRight)
