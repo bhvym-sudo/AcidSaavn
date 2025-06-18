@@ -1,5 +1,6 @@
-# AcidSaavn z2
+# AcidSaavn z3
 - All pro features of jio saavn available, unlimited downloads, high quality songs without ads
+- Added Seeking player bar.
 - lets you play and download songs, no login bs,just search.
 - https://github.com/bhvym-sudo/AcidSaavn/releases/
 
