@@ -34,6 +34,7 @@ def get_jiosaavn_results(query):
 
     output = []
     for item in results:
+        
         title = item.get("title", "")
         subtitle = item.get("subtitle", "")
         image = item.get("image", "")
@@ -42,8 +43,10 @@ def get_jiosaavn_results(query):
             "title": title,
             "subtitle": subtitle,
             "image": image,
-            "encrypted_media_url": encrypted_media_url
+            "encrypted_media_url": encrypted_media_url,
+            "duration": duration
         })
 
-    return output
+    print(output)
+get_jiosaavn_results("nayan tarse")
 

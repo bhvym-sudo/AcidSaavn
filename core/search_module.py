@@ -36,6 +36,7 @@ def search_jiosaavn(query):
             "title": item.get("title", ""),
             "subtitle": item.get("subtitle", ""),
             "image": item.get("image", ""),
-            "encrypted_media_url": more_info.get("encrypted_media_url", "")
+            "encrypted_media_url": more_info.get("encrypted_media_url", ""),
+            "duration": more_info.get("duration", "")
         })
     return output

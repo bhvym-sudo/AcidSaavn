@@ -138,7 +138,7 @@ class SongCard(QFrame):
     def set_playing_state(self, playing):
         if not self.is_deleted:
             self.is_playing = playing
-            self.play_btn.setText("⏸" if playing else "▶")
+            self.play_btn.setText("||" if playing else "▶")
     
     def reset_play_state(self):
         if not self.is_deleted:

@@ -47,6 +47,8 @@ for song in results:
     subtitle = song.get("subtitle", "")
     image = song.get("image", "")
     encrypted_media_url = song.get("encrypted_media_url", "")
+    duration = song.get("duration", "")
+    
     
     token_data = get_auth_token(encrypted_media_url)
     auth_url = token_data.get('auth_url', '')
@@ -58,7 +60,7 @@ for song in results:
         "title": title,
         "subtitle": subtitle,
         "image": image,
-        "url": auth_url
+        "url": auth_url,
     })
 
 

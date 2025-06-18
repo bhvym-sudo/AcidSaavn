@@ -201,16 +201,24 @@ class AcidSaavnGUI(QMainWindow):
     def start_playback(self):
         if not self.current_song_data:
             return
-        
+
         query = self.search_bar.text().strip()
         self.status_label.setText(f"Loading: {self.current_song_data['title']}")
-        
+
+        duration_raw = self.current_song_data.get("duration", "180")
+        if isinstance(duration_raw, str) and ":" in duration_raw:
+            mins, secs = map(int, duration_raw.split(":"))
+            self.current_song_data["duration"] = mins * 60 + secs
+        else:
+            self.current_song_data["duration"] = float(duration_raw)
+
         self.play_worker = PlayWorker(self.current_song_data, query=query, start_position=self.current_position)
         self.play_worker.playbackStarted.connect(self.on_playback_started)
         self.play_worker.playbackFailed.connect(self.on_playback_failed)
         self.play_worker.positionUpdate.connect(self.on_position_update)
         self.play_worker.playbackEnded.connect(self.on_playback_ended)
         self.play_worker.start()
+
 
     def toggle_playback(self):
         if not self.current_song_data:
