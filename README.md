@@ -7,7 +7,7 @@
 - lets you play and download songs, no login bs,just search.
 - https://github.com/bhvym-sudo/AcidSaavn/releases/
 - Only for research purposes.
-- Email: bhvym72@gmal.com for removal
+- Email: bhvym72@gmail.com for removal
 
     ## Future add-ons
     - Trending songs api
