@@ -12,6 +12,7 @@ from utils.image_loader import ImageLoader
 from utils.search_worker import SearchWorker
 from utils.player_worker import PlayWorker
 from utils.song_card import SongCard
+from ui.sidebar import SideBar
 
 
 
@@ -48,6 +49,9 @@ class AcidSaavnGUI(QMainWindow):
                 border-radius: 6px;
             }}
         """)
+
+        self.sidebar = SideBar()
+        
         self.search_worker = None
         self.play_worker = None
         self.current_playing_card = None
@@ -63,27 +67,60 @@ class AcidSaavnGUI(QMainWindow):
     def setup_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        main_layout = QVBoxLayout(central_widget)
-        main_layout.setContentsMargins(20, 20, 20, 0)
-        main_layout.setSpacing(15)
         
+
+        main_layout = QVBoxLayout(central_widget)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+        
+
+        content_horizontal_layout = QHBoxLayout()
+        content_horizontal_layout.setContentsMargins(0, 0, 0, 0)
+        content_horizontal_layout.setSpacing(0)
+        
+
+        content_horizontal_layout.addWidget(self.sidebar)
+
+
+        content_widget = QWidget()
+        content_layout = QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(20, 20, 20, 0)
+        content_layout.setSpacing(15)
+
+        top_bar_layout = QHBoxLayout()
+
+        self.sidebar_toggle_btn = QPushButton("☰")
+        self.sidebar_toggle_btn.setFixedSize(40, 40)
+        self.sidebar_toggle_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {NIGHT};
+                border: none;
+                border-radius: 20px;
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background-color: {CHARCOAL};
+            }}
+            QPushButton:pressed {{
+                background-color: {CERULEAN};
+            }}
+        """)
+        self.sidebar_toggle_btn.clicked.connect(self.toggle_sidebar)
+        top_bar_layout.addWidget(self.sidebar_toggle_btn)
+        
+        # Title
         title_label = QLabel("AcidSaavn")
         title_label.setFont(QFont("Arial", 28, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setStyleSheet(f"color: {CERULEAN}; margin: 10px;")
-        main_layout.addWidget(title_label)
+        top_bar_layout.addWidget(title_label)
 
-        version_label = QLabel("Version - z3, made by bhvym")
-        version_label.setFont(QFont("Arial", 9))
-        version_label.setStyleSheet("color: gray; padding-right: 5px;")
-        version_label.setAlignment(Qt.AlignRight)
-
-        version_container = QHBoxLayout()
-        version_container.addStretch()
-        version_container.addWidget(version_label)
-
-        main_layout.addLayout(version_container)
+        top_bar_layout.addWidget(QWidget())
         
+        content_layout.addLayout(top_bar_layout)
+
         search_layout = QHBoxLayout()
         search_layout.setSpacing(10)
         
@@ -107,13 +144,13 @@ class AcidSaavnGUI(QMainWindow):
         self.search_bar.textChanged.connect(self.on_text_changed)
         search_layout.addWidget(self.search_bar)
         
-        main_layout.addLayout(search_layout)
-        
+        content_layout.addLayout(search_layout)
+
         self.status_label = QLabel("Enter a search query to find music...")
         self.status_label.setAlignment(Qt.AlignCenter)
         self.status_label.setStyleSheet("color: #aaa; font-size: 14px; margin: 10px;")
-        main_layout.addWidget(self.status_label)
-        
+        content_layout.addWidget(self.status_label)
+
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -126,12 +163,22 @@ class AcidSaavnGUI(QMainWindow):
         self.results_layout.addStretch()  
         
         self.scroll_area.setWidget(self.results_widget)
-        main_layout.addWidget(self.scroll_area)
+        content_layout.addWidget(self.scroll_area)
+ 
+        content_horizontal_layout.addWidget(content_widget)
         
+   
+        main_layout.addLayout(content_horizontal_layout)
+        
+ 
         self.player_bar = PlayerBar()
         self.player_bar.playPauseClicked.connect(self.toggle_playback)
         self.player_bar.positionChanged.connect(self.seek_to_position)
         main_layout.addWidget(self.player_bar)
+
+    def toggle_sidebar(self):
+        """Toggle the sidebar expand/collapse state"""
+        self.sidebar.toggle_expand()
 
     def on_text_changed(self):
         self.search_timer.stop()

@@ -39,7 +39,7 @@ class PlayerBar(QFrame):
         self.album_art.setStyleSheet(f"""
             QLabel {{
                 background-color: {CHARCOAL};
-                border-radius: 8px;
+                border-radius: 44px;
             }}
         """)
         self.album_art.setAlignment(Qt.AlignCenter)

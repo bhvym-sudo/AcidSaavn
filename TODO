@@ -1,6 +1,7 @@
 - Modify the backend , and send requests using Sessions, reset the session when we search and play new song
 - Randomize the cookies in headers, to avoid suspicion
-- Remove the bugs from the music bar, and make it functioning
-- Music length is not showing
 - Bar is not working to navigate through songs
+- Implement a side menu, for options
+- Add new api for latest releases 
+- https://www.jiosaavn.com/api.php?__call=content.getAlbums&api_version=4&_format=json&_marker=0&n=50&p=1&ctx=web6dot0
 - 
