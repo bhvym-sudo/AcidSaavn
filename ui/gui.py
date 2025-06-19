@@ -13,7 +13,7 @@ from utils.search_worker import SearchWorker
 from utils.player_worker import PlayWorker
 from utils.song_card import SongCard
 from ui.sidebar import SideBar
-
+from ui.home_gui import HomePage
 
 
 CHARCOAL = "#1E3B4C"
@@ -51,6 +51,9 @@ class AcidSaavnGUI(QMainWindow):
         """)
 
         self.sidebar = SideBar()
+        self.sidebar.home_btn.clicked.connect(self.show_home_page)
+        self.sidebar.search_btn.clicked.connect(self.show_search_page)
+
         
         self.search_worker = None
         self.play_worker = None
@@ -63,7 +66,8 @@ class AcidSaavnGUI(QMainWindow):
         self.search_timer.setSingleShot(True)
         self.search_timer.timeout.connect(self.perform_search)
         self.setup_ui()
-    
+        self.show_home_page()
+
     def setup_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -83,9 +87,9 @@ class AcidSaavnGUI(QMainWindow):
 
 
         content_widget = QWidget()
-        content_layout = QVBoxLayout(content_widget)
-        content_layout.setContentsMargins(20, 20, 20, 0)
-        content_layout.setSpacing(15)
+        self.content_layout = QVBoxLayout(content_widget)
+        self.content_layout.setContentsMargins(20, 20, 20, 0)
+        self.content_layout.setSpacing(15)
 
         top_bar_layout = QHBoxLayout()
 
@@ -119,7 +123,7 @@ class AcidSaavnGUI(QMainWindow):
 
         top_bar_layout.addWidget(QWidget())
         
-        content_layout.addLayout(top_bar_layout)
+        self.content_layout.addLayout(top_bar_layout)
 
         search_layout = QHBoxLayout()
         search_layout.setSpacing(10)
@@ -144,12 +148,12 @@ class AcidSaavnGUI(QMainWindow):
         self.search_bar.textChanged.connect(self.on_text_changed)
         search_layout.addWidget(self.search_bar)
         
-        content_layout.addLayout(search_layout)
+        self.content_layout.addLayout(search_layout)
 
         self.status_label = QLabel("Enter a search query to find music...")
         self.status_label.setAlignment(Qt.AlignCenter)
         self.status_label.setStyleSheet("color: #aaa; font-size: 14px; margin: 10px;")
-        content_layout.addWidget(self.status_label)
+        self.content_layout.addWidget(self.status_label)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -163,7 +167,7 @@ class AcidSaavnGUI(QMainWindow):
         self.results_layout.addStretch()  
         
         self.scroll_area.setWidget(self.results_widget)
-        content_layout.addWidget(self.scroll_area)
+        self.content_layout.addWidget(self.scroll_area)
  
         content_horizontal_layout.addWidget(content_widget)
         
@@ -240,7 +244,9 @@ class AcidSaavnGUI(QMainWindow):
         self.current_position = 0
         self.is_paused = False
         
-        card.set_playing_state(True)
+        if card is not None:
+            card.set_playing_state(True)
+
         self.player_bar.set_song(song_data)
         self.player_bar.set_playing(True)
         self.start_playback()
@@ -398,6 +404,36 @@ class AcidSaavnGUI(QMainWindow):
             self.search_worker.terminate()
             self.search_worker.wait()
         event.accept()
+    
+    def show_home_page(self):
+        if hasattr(self, 'home_page') and self.home_page:
+            self.content_layout.removeWidget(self.home_page)
+            self.home_page.deleteLater()
+            self.home_page = None
+
+        self.scroll_area.hide()
+        self.status_label.hide()
+        self.search_bar.hide()
+
+        self.home_page = HomePage(self)
+        self.content_layout.addWidget(self.home_page)
+
+        self.sidebar.home_btn.setChecked(True)
+        self.sidebar.search_btn.setChecked(False)
+
+    def show_search_page(self):
+        if hasattr(self, 'home_page') and self.home_page:
+            self.content_layout.removeWidget(self.home_page)
+            self.home_page.deleteLater()
+            self.home_page = None
+
+        self.scroll_area.show()
+        self.status_label.show()
+        self.search_bar.show()
+
+        self.sidebar.search_btn.setChecked(True)
+        self.sidebar.home_btn.setChecked(False)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

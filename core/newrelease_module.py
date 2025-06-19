@@ -29,13 +29,15 @@ def get_new_releases():
     results = data.get("data", [])
     output = []
     for songs in results:
-        more_info = songs.get("more_info", "")
-        output.append({
-            "title": songs.get("title", ""),
-            "subtitle": songs.get("subtitle", ""),
-            "image": songs.get("image", ""),
-            "encrypted_media_url": more_info.get("encrypted_media_url", ""),
-            "duration": more_info.get("duration", "")
-        })
+        if songs.get("type", "") == "song":
+            more_info = songs.get("more_info", "")
+            output.append({
+                "title": songs.get("title", "").split(" (From")[0].strip(),
+                "subtitle": songs.get("subtitle", ""),
+                "image": songs.get("image", ""),
+                "encrypted_media_url": more_info.get("encrypted_media_url", ""),
+                "duration": more_info.get("duration", "")
+            })
     return output
+
 
